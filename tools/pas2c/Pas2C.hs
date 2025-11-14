@@ -9,6 +9,14 @@ import Text.Parsec.Prim hiding (State)
 import Control.Monad.State
 import Control.Monad (unless, guard)
 import Data.Functor (void)
+import System.IO
+import PascalPreprocessor
+import Control.Exception
+import System.IO.Error
+import qualified Data.Map as Map
+import qualified Data.Set as Set
+import Data.List (find, stripPrefix)
+import Numeric
 
 -- Compatibility: GHC/base versions may not export liftM/liftM2 anymore.
 -- Define them locally so pas2c builds on newer compilers.
@@ -20,18 +28,9 @@ liftM2 f ma mb = do
     a <- ma
     b <- mb
     return (f a b)
-import System.IO
-import PascalPreprocessor
-import Control.Exception
-import System.IO.Error
-import qualified Data.Map as Map
-import qualified Data.Set as Set
-import Data.List (find, stripPrefix)
-import Numeric
 
 import PascalParser
 import PascalUnitSyntaxTree
-
 
 data InsertOption =
     IOInsert
