@@ -1,0 +1,54 @@
+name: Generate C engine sources via pas2c
+
+on:
+  workflow_dispatch:
+  push:
+    paths:
+      - "hedgewars/**"
+      - "project_files/hwc/**"
+      - "tools/pas2c/**"
+      - "CMakeLists.txt"
+      - ".github/workflows/engine-c.yml"
+
+jobs:
+  build-engine-c:
+    runs-on: ubuntu-22.04
+
+    steps:
+      - name: Checkout repo
+        uses: actions/checkout@v4
+
+      - name: Install build dependencies (Linux)
+        run: |
+          sudo add-apt-repository ppa:costamagnagianfranco/hedgewars-nightly -y
+          sudo apt-get update -qq
+          sudo apt-get install -y --no-install-recommends \
+            cmake debhelper dpkg-dev fp-compiler fp-units-gfx fp-units-misc \
+            ghc libavcodec-dev libavformat-dev libghc-aeson-dev libghc-entropy-dev \
+            libghc-hslogger-dev libghc-mtl-dev libghc-network-dev libghc-parsec3-dev \
+            libghc-random-dev libghc-regex-tdfa-dev libghc-sandi-dev libghc-sha-dev \
+            libghc-text-dev libghc-utf8-string-dev libghc-vector-dev libghc-yaml-dev \
+            libghc-zlib-dev liblua5.1-dev libphysfs-dev libpng-dev libsdl2-dev \
+            libsdl2-image-dev libsdl2-mixer-dev libsdl2-net-dev libsdl2-ttf-dev \
+            qtbase5-dev qtbase5-private-dev qttools5-dev qttools5-dev-tools
+
+      - name: Configure CMake with BUILD_ENGINE_C
+        run: |
+          mkdir build
+          cd build
+          cmake -DBUILD_ENGINE_C=ON -DNOSERVER=1 -DLUA_SYSTEM=0 -DNOVIDEOREC=1 ..
+
+      - name: Generate C engine sources via pas2c
+        working-directory: ./build
+        run: |
+          cmake --build . --target engine_c -- -j$(nproc)
+
+      - name: Upload C engine sources artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: engine-c-sources
+          path: |
+            build/project_files/hwc/*.c
+            build/project_files/hwc/*.h
+            build/project_files/hwc/rtl/*.c
+            build/project_files/hwc/rtl/*.h
