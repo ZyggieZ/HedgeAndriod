@@ -6,7 +6,7 @@ import System.Exit
 import System.IO
 import Data.Maybe( fromMaybe, isJust, fromJust )
 import Data.List (find, intercalate)
-import Control.Monad
+import Control.Monad hiding (liftM)
 import Pas2C
 
 main = do
