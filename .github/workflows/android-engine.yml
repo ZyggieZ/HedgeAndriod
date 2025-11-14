@@ -21,7 +21,7 @@ jobs:
         run: |
           sudo apt-get update
           sudo apt-get install -y \
-            cmake make fp-compiler wget unzip openjdk-8-jdk
+            cmake make fp-compiler wget unzip openjdk-8-jdk ant
 
       - name: Download Android NDK r10e
         run: |
@@ -34,7 +34,7 @@ jobs:
         working-directory: project_files/Android-build
         env:
           ANDROID_NDK: ${{ env.ANDROID_NDK }}
-        run: cmake .
+        run: cmake . -DANDROID_NDK=${ANDROID_NDK}
 
       - name: Build legacy Android engine (debug)
         working-directory: project_files/Android-build
