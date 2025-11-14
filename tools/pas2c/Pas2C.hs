@@ -17,6 +17,8 @@ import qualified Data.Map as Map
 import qualified Data.Set as Set
 import Data.List (find, stripPrefix)
 import Numeric
+import PascalParser
+import PascalUnitSyntaxTree
 
 -- Compatibility: GHC/base versions may not export liftM/liftM2 anymore.
 -- Define them locally so pas2c builds on newer compilers.
@@ -28,9 +30,6 @@ liftM2 f ma mb = do
     a <- ma
     b <- mb
     return (f a b)
-
-import PascalParser
-import PascalUnitSyntaxTree
 
 data InsertOption =
     IOInsert
