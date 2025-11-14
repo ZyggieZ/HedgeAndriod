@@ -29,12 +29,15 @@ jobs:
           chmod +x android-ndk-r10e-linux-x86_64.bin
           ./android-ndk-r10e-linux-x86_64.bin > /dev/null
           echo "ANDROID_NDK=$GITHUB_WORKSPACE/android-ndk-r10e" >> $GITHUB_ENV
+          # Hard-code the legacy ARM toolchain dir for r10e on Linux
+          echo "ANDROID_NDK_TOOLCHAINDIR=$GITHUB_WORKSPACE/android-ndk-r10e/toolchains/arm-linux-androideabi-4.8/prebuilt/linux-x86_64" >> $GITHUB_ENV
 
       - name: Configure legacy Android build
         working-directory: project_files/Android-build
         env:
           ANDROID_NDK: ${{ env.ANDROID_NDK }}
-        run: cmake . -DANDROID_NDK=${ANDROID_NDK}
+          ANDROID_NDK_TOOLCHAINDIR: ${{ env.ANDROID_NDK_TOOLCHAINDIR }}
+        run: cmake . -DANDROID_NDK=${ANDROID_NDK} -DANDROID_NDK_TOOLCHAINDIR=${ANDROID_NDK_TOOLCHAINDIR}
 
       - name: Build legacy Android engine (debug)
         working-directory: project_files/Android-build
