@@ -7,6 +7,19 @@ import Data.Maybe
 import Data.Char
 import Text.Parsec.Prim hiding (State)
 import Control.Monad.State
+import Control.Monad (unless, guard)
+import Data.Functor (void)
+
+-- Compatibility: GHC/base versions may not export liftM/liftM2 anymore.
+-- Define them locally so pas2c builds on newer compilers.
+liftM :: Monad m => (a -> b) -> m a -> m b
+liftM f ma = fmap f ma
+
+liftM2 :: Monad m => (a -> b -> c) -> m a -> m b -> m c
+liftM2 f ma mb = do
+    a <- ma
+    b <- mb
+    return (f a b)
 import System.IO
 import PascalPreprocessor
 import Control.Exception
